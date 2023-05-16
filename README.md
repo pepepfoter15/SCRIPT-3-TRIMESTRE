@@ -1,4 +1,4 @@
-#PROYECTO FINAL DE 3ER TRIMESTRE - ISO
+# PROYECTO FINAL DE 3ER TRIMESTRE - ISO
 
 En este proyecto nos basaremos en un enunciado dado por el maestro, que será el siguiente:
 
