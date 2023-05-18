@@ -24,7 +24,7 @@ fi
 
 f_subir_tarjeta_cableada
 if [ $? -eq 0 ] ; then
-    f_comprobacion_dhcp
+    f_apipa_dhcp
     if [ $? -eq 0 ] ; then
         echo -e  $nombre_tarjeta_cableada 'está bien configurada.'
     else

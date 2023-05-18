@@ -67,7 +67,7 @@ function f_subir_tarjeta_cableada {
 
 #Función : Comprobar que el estado del DHCP 
 
-function f_comprobacion_dhcp {
+function f_apipa_dhcp {
     if [ $(ip addr show | awk '/inet / {split($2, a, "."); if(a[1] == "169") print $2}') ] ; then
         return 1
     else 
@@ -78,10 +78,8 @@ function f_comprobacion_dhcp {
 
 #Función : Comprobar si es dinámica la ip.
 function f_ip_dinamica {
-    info_network_interfaces=$(grep -E '^(auto|iface)' /etc/network/interfaces)
-    echo -e "En el fichero /etc/network/interfaces podemos ver que esta configurado dinámico por lo siguiente:"
-    echo -e $info_network_interfaces
-    echo -e "Estos son las ips que vienen dadas por DHCP:"
+    echo -e "Esta es la ip de la tarjeta cableada que vienen dadas por DHCP:"
     echo -e "Cableada: "$info_ip_cableada
+    echo -e "Puerta de enlace: "$gateway
 }
 
