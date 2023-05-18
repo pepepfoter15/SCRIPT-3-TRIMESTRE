@@ -1,7 +1,7 @@
 #!/bin/bash
 #Fichero de funciones
 
-nombre_tarjeta_cableada=$(ip link | awk '{sub(/:$/, "", $2); if ($2 ~ /^e/) print $2}' | grep -e '^e')
+nombre_tarjeta_cableada=$(ip link | awk '{sub(/:$/, "", $2); if ($2 ~ /^e/) print $2}' | grep -e '^e' | head -n 1)
 gateway=$(ip route show dev $nombre_tarjeta_cableada | grep default | awk '{print $3}')
 info_network_interfaces=$(grep -E '^(auto|iface)' /etc/network/interfaces)
 info_ip_cableada=$(ip a | grep "scope global dynamic" | grep -oE '\b([0-9]{1,3}\.){3}[0-9]{1,3}\b' | sed -n '1p;')
@@ -83,6 +83,5 @@ function f_ip_dinamica {
     echo -e $info_network_interfaces
     echo -e "Estos son las ips que vienen dadas por DHCP:"
     echo -e "Cableada: "$info_ip_cableada
-    echo -e "WIFI: "$info_ip_wifi
 }
 
