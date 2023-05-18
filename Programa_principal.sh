@@ -4,18 +4,49 @@
 #Enlazar programa funcional con el de funciones
 . ./funciones.sh
 
-#1. Comprobar que esta la cableada correctamente configurada
+#1.Comprobamos si somsos root.
+
+f_somosroot
+if [ $? -ne 0 ]; then
+    exit 1
+fi
+
+echo -e '1.- Comprobación de las tarjetas.'
+
+#2.Comprobar que esta la cableada correctamente configurada.
+
 f_estado_cableada
 if [ $? -ne 0 ]; then
-    exit 1
+    sleep 1
 fi
-echo 'El nombre de la tarjeta cableada es: '$nombre_tarjeta_cableada
 
-f_estado_inalambrica
-if [ $? -ne 0 ]; then
-    exit 1
+#3 y 4.Subir la tarjeta y comprobar que el dhcp esta perfectamente.
+
+f_subir_tarjeta_cableada
+if [ $? -eq 0 ] ; then
+    f_comprobacion_dhcp
+    if [ $? -eq 0 ] ; then
+        echo -e  $nombre_tarjeta_cableada 'está bien configurada.'
+    else
+        echo -e 'La ip por dhcp esta mal configurada. Mira si tienes el cable RJ45 conectado.'
+        exit 1
+    fi
+else
+    echo -e 'No hemos conseguido subir tu tarjeta. Mira si tienes el cable RJ45 conectado.'
 fi
-echo 'El nombre de la tarjeta WIFI es: '$nombre_tarjeta_wifi
+
+#5.Comprobar que esta la WIFI correctamente configurada.
+f_estado_inalambrica
+if [ $? -eq 0 ]; then
+    echo -e $nombre_tarjeta_wifi 'está bien configurada'
+fi
+
+echo -e ' '
+echo -e '2.- Comprobación que el DHCP condfigurando.'
+
+#6.Comprobar que es dinámica la ip
+f_ip_dinamica
+
 
 #. Comprobar si tenemos conexion a internet 
 #f_conexion
