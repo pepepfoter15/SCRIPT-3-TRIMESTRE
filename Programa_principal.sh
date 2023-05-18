@@ -35,16 +35,11 @@ else
     echo -e 'No hemos conseguido subir tu tarjeta. Mira si tienes el cable RJ45 conectado.'
 fi
 
-#5.Comprobar que esta la WIFI correctamente configurada.
-f_estado_inalambrica
-if [ $? -eq 0 ]; then
-    echo -e $nombre_tarjeta_wifi 'está bien configurada'
-fi
 
 echo -e ' '
 echo -e '2.- Comprobación que el DHCP condfigurando.'
 
-#6.Comprobar que es dinámica la ip
+#5.Comprobar que es dinámica la ip
 f_ip_dinamica
 
 
