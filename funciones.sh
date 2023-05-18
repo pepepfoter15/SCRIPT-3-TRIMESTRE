@@ -78,7 +78,7 @@ function f_apipa_dhcp {
 
 #Función : Comprobar si es dinámica la ip.
 function f_ip_dinamica {
-    if [ $(ip addr show $nombre_tarjeta_cableada | grep -w inet | grep dynamic) ] ; then
+    if [ $(ip addr show $nombre_tarjeta_cableada | grep -w "global dynamic") > /dev/null 2>&1 ] ; then
         return 0
     else
         return 1

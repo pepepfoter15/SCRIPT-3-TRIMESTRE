@@ -13,31 +13,58 @@ fi
 
 echo -e '1.- Comprobación de las tarjetas.'
 
+
+f_ping_google
+if [ $? -eq 0 ]; then
+    echo -e "Perfecto, usted tiene conectividad con el servidor DNS."
+    exit 0
+
+else
+    echo -e "Error al conectar con la servidor DNS."
+    f_conexion
+
+    if [ $? -eq 0]; then
+        echo -e "Tienes error con el DNS. Añadiendo el DNS de Google..."
+        echo "DNS=8.8.8.8 8.8.4.4" | sudo tee -a /etc/systemd/resolved.conf > /dev/null
+        systemctl restart systemd-resolved
+        f_ping_google
+        echo -e "Perfecto, usted tiene conectividad con el servidor DNS."
+        exit 0
+
+    else
+        echo -e "Tienes un problema con tu puerta de enlace."
+        f_ping_gateway
+        
+        if [ $? -eq 0]; then
+            echo -e "Usted tiene bien configurada la ip porque lleva el ping al gateway."
+        
+        else
+            f_estado_cableada
+            if [ $? -eq 0 ]; then
+                sleep 1
+            fi
+            f_subir_tarjeta_cableada
+                if [ $? -eq 0 ] ; then
+                    f_apipa_dhcp
+                    if [ $? -eq 0 ] ; then
+                        echo -e  $nombre_tarjeta_cableada 'está bien configurada.'
+                    else
+                        echo -e 'La ip por dhcp esta mal configurada. Mira si tienes el cable RJ45 conectado.'
+                        exit 1
+                    fi
+            else
+                echo -e 'No hemos conseguido subir tu tarjeta. Mira si tienes el cable RJ45 conectado.'
+                exit 1
+            fi
+        fi
+
+    
+    fi
+fi
+
 #2.Comprobar que esta la cableada correctamente configurada.
 
-f_estado_cableada
-if [ $? -ne 0 ]; then
-    sleep 1
-fi
 
-#3 y 4.Subir la tarjeta y comprobar que el dhcp esta perfectamente.
-
-f_subir_tarjeta_cableada
-if [ $? -eq 0 ] ; then
-    f_apipa_dhcp
-    if [ $? -eq 0 ] ; then
-        echo -e  $nombre_tarjeta_cableada 'está bien configurada.'
-    else
-        echo -e 'La ip por dhcp esta mal configurada. Mira si tienes el cable RJ45 conectado.'
-        exit 1
-    fi
-else
-    echo -e 'No hemos conseguido subir tu tarjeta. Mira si tienes el cable RJ45 conectado.'
-fi
-
-
-echo -e ' '
-echo -e '2.- Comprobación que el DHCP condfigurando.'
 
 #5.Comprobar que es dinámica la ip
 f_ip_dinamica
@@ -50,10 +77,3 @@ else
     echo "auto "$nombre_tarjeta_cableada | sudo tee /etc/network/interfaces > /dev/null
     echo "iface "$nombre_tarjeta_cableada" inet dhcp" | sudo tee -a /etc/network/interfaces > /dev/null
 fi
-
-#. Comprobar si tenemos conexion a internet 
-#f_conexion
-#if [ $? -ne 0 ]; then
-#    exit 1
-#fi
-#echo 'Usted tiene conectividad con la red.'
