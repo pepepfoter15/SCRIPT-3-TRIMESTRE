@@ -41,7 +41,15 @@ echo -e '2.- Comprobación que el DHCP condfigurando.'
 
 #5.Comprobar que es dinámica la ip
 f_ip_dinamica
-
+if [ $? -eq 0 ] ; then
+    echo -e "Esta es la ip de la tarjeta cableada que vienen dadas por DHCP:"
+    echo -e "Cableada: "$info_ip_cableada
+    echo -e "Puerta de enlace: "$gateway
+else
+    echo -e "Configuración de IP estática inválida. Aplicando automáticamente IP por DHCP..."
+    echo "auto "$nombre_tarjeta_cableada | sudo tee /etc/network/interfaces > /dev/null
+    echo "iface "$nombre_tarjeta_cableada" inet dhcp" | sudo tee -a /etc/network/interfaces > /dev/null
+fi
 
 #. Comprobar si tenemos conexion a internet 
 #f_conexion

@@ -78,8 +78,10 @@ function f_apipa_dhcp {
 
 #Función : Comprobar si es dinámica la ip.
 function f_ip_dinamica {
-    echo -e "Esta es la ip de la tarjeta cableada que vienen dadas por DHCP:"
-    echo -e "Cableada: "$info_ip_cableada
-    echo -e "Puerta de enlace: "$gateway
+    if [ $(ip addr show $nombre_tarjeta_cableada | grep -w inet | grep dynamic) ] ; then
+        return 0
+    else
+        return 1
+    fi
 }
 
