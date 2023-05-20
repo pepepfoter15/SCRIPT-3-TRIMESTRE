@@ -33,9 +33,7 @@ function f_conexion {
     if ping -c 1 -q 8.8.8.8 > /dev/null; then
         return 0
     else
-        echo -e "Para ejecutar este script es necesario que disponga de conexion a internet."
-        echo -e "Para ello, deberá tener la cableada subida y perfectamente configurada."
-    return 1
+        return 1
     fi
 }
 
@@ -49,7 +47,7 @@ function f_ping_gateway {
 
 #Función : comprobamos que la tarjeta cableada si esta UP o DOWN y si existe.
 
-function f_estado_cableada {
+function f_encontrar_cableada {
     if [ $(ip link | awk '/\<UP\>/ {sub(/:$/, "", $2); if ($2 ~ /^e/ && $9 == "UP") print $2}' | grep -e '^e') ] ; then
         return 0
     else
@@ -57,12 +55,6 @@ function f_estado_cableada {
         echo -e "Subo automáticamente la tarjeta cableada."
         return 1
     fi
-}
-
-#Función : Subir la tarjeta cableada.
-
-function f_subir_tarjeta_cableada {
-    sudo ifup $nombre_tarjeta_cableada > /dev/null 2>&1
 }
 
 #Función : Comprobar que el estado del DHCP 
@@ -75,10 +67,10 @@ function f_apipa_dhcp {
     fi
 }
 
+#Función : Subir la tarjeta cableada.
 
-#Función : Comprobar si es dinámica la ip.
-function f_ip_dinamica {
-    if [ $(ip addr show $nombre_tarjeta_cableada | grep -w "global dynamic") > /dev/null 2>&1 ] ; then
+f_subir_tarjeta_cableada() {
+    if ifdown $nombre_tarjeta_cableada && ifup $nombre_tarjeta_cableada > /dev/null 2>&1; then
         return 0
     else
         return 1
