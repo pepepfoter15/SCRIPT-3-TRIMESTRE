@@ -36,6 +36,7 @@ if [ $? -eq 0 ]
         echo -e "No puedes hacer nada :)."
         exit 1
     fi
+    sleep 1
 else
     f_encontrar_cableada
     echo -e "Interfaz encontrada: " $nombre_tarjeta_cableada
@@ -113,6 +114,7 @@ else
         fi
     fi
 fi
+
 
 echo -e "Esta es la ip de la tarjeta cableada que vienen dadas por DHCP:"
 echo -e "Cableada: "$info_ip_cableada
