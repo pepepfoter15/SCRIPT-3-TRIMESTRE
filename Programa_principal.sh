@@ -1,6 +1,9 @@
 #!/bin/bash
 #Fichero con el programa principal
 
+#Autor: José Carlos (Pepe) Rodríguez Cañas
+#Descripción: Este proyecto de script trata sobre un script de detecta los errores de la interfaz cableada que tu quieras y las corrige para que funcione correctamente tanto la cableada, como el DNS, como la conectividad a Internet.
+
 #Enlazar programa funcional con el de funciones
 . ./funciones.sh
 
