@@ -1,13 +1,7 @@
 #!/bin/bash
 #Fichero de funciones
 
-nombre_tarjeta_cableada=$(ip link | awk '{sub(/:$/, "", $2); if ($2 ~ /^e/) print $2}' | grep -e '^e' | head -n 1)
-gateway=$(ip route show dev $nombre_tarjeta_cableada | grep default | awk '{print $3}')
-info_network_interfaces=$(grep -E '^(auto|iface)' /etc/network/interfaces)
-info_ip_cableada=$(ip a | grep "scope global dynamic" | grep -oE '\b([0-9]{1,3}\.){3}[0-9]{1,3}\b' | sed -n '1p;')
-
-# Función : para comprobar que somos root.
-
+# Función 1: Para comprobar que somos root.
 function f_somosroot {
     if [ $UID -eq 0 ]; then
         return 0
@@ -17,10 +11,9 @@ function f_somosroot {
     fi
 }
 
-#Función : Comprobar conectividad
-
+#Función 2: Comprobar conectividad con el dominio de Google.
 function f_ping_google {
-    if ping -c 4 www.google.com > /dev/null; then
+    if ping -c 4 www.google.com > /dev/null 2>&1; then
         return 0
     else
         return 1
@@ -28,52 +21,52 @@ function f_ping_google {
 }
 
 
-#Función : comprobamos la conectividad
+#Función 3: Comprobamos la conectividad con Internet.
 function f_conexion {
-    if ping -c 1 -q 8.8.8.8 > /dev/null; then
+    if ping -c 1 -q 8.8.8.8 > /dev/null 2>&1; then
         return 0
     else
         return 1
     fi
 }
 
+#Función 4: Comprobar el ping al gateway de mi red local.
 function f_ping_gateway {
-    if ping -c 4 $gateway > /dev/null; then
+    gateway=$(sudo ip route show dev $interfaz | grep default | awk '{print $3}' | head -n 1)
+    if ping -c 4 $gateway > /dev/null 2>&1; then
         return 0
     else
         return 1
     fi
 }
 
-#Función : comprobamos que la tarjeta cableada si esta UP o DOWN y si existe.
-
-function f_encontrar_cableada {
-    if [ $(ip link | awk '/\<UP\>/ {sub(/:$/, "", $2); if ($2 ~ /^e/ && $9 == "UP") print $2}' | grep -e '^e') ] ; then
+#Función 5: comprobamos que la tarjeta cableada si existe o no.
+function f_comprobar_interfaz() {
+    interfaz="$1"
+    if ip a show "$interfaz" >/dev/null 2>&1; then
         return 0
     else
-        echo -e "La tarjeta cableada $nombre_tarjeta_cableada no ha sido encontrada."
-        echo -e "Subo automáticamente la tarjeta cableada."
         return 1
     fi
 }
 
-#Función : Comprobar que el estado del DHCP 
+#Función 6: Comprobar que la ip que nos muestra es una apipa.
 
 function f_apipa_dhcp {
     if [ $(ip addr show | awk '/inet / {split($2, a, "."); if(a[1] == "169") print $2}') ] ; then
-        return 1
-    else 
         return 0
+    else 
+        return 1
     fi
 }
 
-#Función : Subir la tarjeta cableada.
+#Función 7: Subir la tarjeta cableada.
 
-f_subir_tarjeta_cableada() {
-    if ifdown $nombre_tarjeta_cableada && ifup $nombre_tarjeta_cableada > /dev/null 2>&1; then
+function f_subir_tarjeta_cableada() {
+    interfaz="$1"
+    if ifup $interfaz > /dev/null 2>&1; then
         return 0
     else
         return 1
     fi
 }
-
