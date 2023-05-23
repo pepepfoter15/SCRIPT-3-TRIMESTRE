@@ -1,6 +1,10 @@
 #!/bin/bash
 #Fichero de funciones
 
+#Autor: José Carlos (Pepe) Rodríguez Cañas
+#Descripción: Este proyecto de script trata sobre un script de detecta los errores de la interfaz cableada que tu quieras y las corrige para que funcione correctamente tanto la cableada, como el DNS, como la conectividad a Internet.
+
+
 # Función 1: Para comprobar que somos root.
 function f_somosroot {
     if [ $UID -eq 0 ]; then
