@@ -2,7 +2,14 @@
 #Fichero con el programa principal
 
 #Autor: José Carlos (Pepe) Rodríguez Cañas
-#Descripción: Este proyecto de script trata sobre un script de detecta los errores de la interfaz cableada que tu quieras y las corrige para que funcione correctamente tanto la cableada, como el DNS, como la conectividad a Internet.
+#Descripción: 
+#Este proyecto de script trata sobre un programa de detecta los errores de la interfaz cableada que tu quieras. 
+#Este script las corrige (es decir, si esta subida comprueba su conectividad, sino, la sube). 
+#Además, si la ip que nos otorga es una ip apipa, nos saldrá del programa notificándonos del error que no tiene el cable RJ45 conectado salta un error.
+#Tras el correcto funcionamientode la cableada, nos comprobará la conectividad a Internet (viendo si hace ping a 8.8.8.8 o Internet y si no, nos saldrá del programa ya que el problema está en el router que no sale a Internet.).
+#Por último, si los pasos anteriores con válidos, probaremos el ping al DNS (sino está el dominio añadido al sistema, le añadimos el DNS de google por defecto en el fichero de configuración /etc/systemd/resolved.conf y probamos otra vez el ping).
+
+#Fecha: 24-05-2023 - Última modificación
 
 #Enlazar programa funcional con el de funciones
 . ./funciones.sh
