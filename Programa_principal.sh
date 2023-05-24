@@ -6,7 +6,7 @@
 #Este proyecto de script trata sobre un programa de detecta los errores de la interfaz cableada que tu quieras. 
 #Este script las corrige (es decir, si esta subida comprueba su conectividad, sino, la sube). 
 #Además, si la ip que nos otorga es una ip apipa, nos saldrá del programa notificándonos del error que no tiene el cable RJ45 conectado salta un error.
-#Tras el correcto funcionamientode la cableada, nos comprobará la conectividad a Internet (viendo si hace ping a 8.8.8.8 o Internet y si no, nos saldrá del programa ya que el problema está en el router que no sale a Internet.).
+#Tras el correcto funcionamiento de la cableada, nos comprobará la conectividad a Internet (viendo si hace ping a 8.8.8.8 o Internet y si no, nos saldrá del programa ya que el problema está en el router que no sale a Internet.).
 #Por último, si los pasos anteriores con válidos, probaremos el ping al DNS (sino está el dominio añadido al sistema, le añadimos el DNS de google por defecto en el fichero de configuración /etc/systemd/resolved.conf y probamos otra vez el ping).
 
 #Fecha: 24-05-2023 - Última modificación
@@ -18,13 +18,20 @@ interfaz=$1
 gateway=$(sudo ip route show dev $interfaz | grep default | awk '{print $3}' | head -n 1)
 info_ip_cableada=$(ip a | grep "scope global dynamic" | grep -oE '\b([0-9]{1,3}\.){3}[0-9]{1,3}\b' | sed -n '1p;')
 
-#1.Comprobamos si somos root.
+#1.Comprobar que me ha introducido un parámetro solamente.
+if [ $# -ne 1 ]; then
+    echo "Para utilizar este script, debes introducir un único valor y este debe ser el nombre de la interfaz cableada."
+    echo "Uso: $0 <nombre_interfaz_cableada>"
+    exit 1
+fi
+
+#2.Comprobamos si somos root.
 f_somosroot
 if [ $? -ne 0 ]; then
     exit 1
 fi
 
-#2.Comprobamos que existe la tarjeta.
+#3.Comprobamos que existe la tarjeta.
 f_comprobar_interfaz "$interfaz"
 if [ $? -eq 0 ]; then
     echo -e "La interfaz $interfaz existe."
@@ -33,7 +40,9 @@ else
     exit 1
 fi
 
-#3.Ejecución del programa principal.
+echo -e "Espere unos instantes..."
+
+#4.Ejecución del programa principal.
 f_subir_tarjeta_cableada "$interfaz"
 if [ $? -eq 0 ]; then
     echo -e "La tarjeta $interfaz ha sido levantada exitosamente."
